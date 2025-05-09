@@ -271,6 +271,9 @@ int main() {
 
     Account::displayTotalAccounts();
 
+     std::cout << "Press Enter to exit...";
+     std::cin.get();
+
     return 0;
 
 }
