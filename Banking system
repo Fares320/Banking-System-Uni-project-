@@ -1,0 +1,282 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Person {
+
+protected:
+
+    string name;
+
+    string address;
+
+
+
+public:
+
+    Person(string n, string a) : name(n), address(a) {}    //constructor
+
+    virtual void displayInfo() {                           //virtual function for polymorphism
+
+        cout << "Name: " << name << "\nAddress: " << address << endl;
+
+    }
+};
+
+
+
+class Account {
+
+protected:
+
+    int accNO;                          //account number
+    double balance;
+
+    static int totalAccounts;
+
+public:
+    Account(int AccNumber, double money) : accNO(AccNumber), balance(money){
+
+        totalAccounts++;
+
+    }
+
+    void deposit(double amount = 100.0) {
+        balance += amount;
+        cout << "Deposited $" << amount << ". New Balance: $" << balance << endl;
+    }
+
+    virtual void withdraw(double amount) {
+
+        if (amount <= balance)
+
+            balance -= amount;
+
+        else
+
+            cout << "Insufficient funds!" << endl;
+
+    }
+
+    virtual void display() {
+
+        cout << "Account Number: " << accNO << "\nBalance: $" << balance << endl;
+
+    }
+    static void displayTotalAccounts() {
+
+        cout << "Total Accounts: " << totalAccounts << endl;
+
+    }
+
+    int getAccountNumber() const {
+
+        return accNO;
+
+    }       };
+
+int Account::totalAccounts = 0;
+
+
+
+class Customer;
+
+void displayCustomerInfo(Customer&);
+
+class Customer : public Person {
+
+    Account* account;
+
+
+public:
+
+    Customer(string n, string a, Account* acc) : Person(n, a), account(acc) {}
+
+    void showDetails() {
+
+        displayInfo();
+
+        account->display();
+
+    }
+    string getName() const {
+        return name;
+    }
+    int getAccountNumber() const {
+        return account->getAccountNumber();
+    }
+
+    friend void displayCustomerInfo(Customer& c);
+
+};
+
+void displayCustomerInfo(Customer& c) {
+
+    cout << "Customer's Name: " << c.name << ", Address: " << c.address << endl;
+
+    c.account->display();
+
+}
+
+class Bank {
+
+    vector<Customer*> customers;
+
+
+
+public:
+
+    void addCustomer(Customer* c) {
+
+        customers.push_back(c);
+
+    }
+
+    void searchCustomer(string name) {             // Function overloading: search by name
+
+        for(auto& c : customers) {
+
+            if (c->getName() == name) {
+
+                c->showDetails();
+
+                return;
+
+            }
+
+        }
+
+        cout << "Customer not found!" << endl;
+
+    }
+    void searchCustomer(int accNumber) {   // Overloaded: search by account number
+
+        for (auto c : customers) {
+
+            if (c->getAccountNumber() == accNumber) {
+
+                c->showDetails();
+
+                return;
+
+            }
+
+        }
+
+        cout << "Customer not found by account number!" << endl;
+
+    }
+    void displayAll() {
+
+        for (auto& c : customers)
+
+            c->showDetails();
+
+    }
+
+};
+
+
+
+struct LoanDetails {
+
+    double loanAmount;
+
+    string loanType;
+
+};
+
+
+
+class Loan {
+
+    double* amount;
+
+
+
+public:
+
+
+
+    Loan(double amt) {
+
+        amount = new double(amt);
+
+    }
+    void showLoan() {
+
+        cout << "Loan Amount: $" << *amount << endl;
+
+    }
+
+    ~Loan() {
+
+        delete amount;
+
+    }
+
+};
+
+int main() {
+
+    Account acc1(101, 1000.0);
+    Customer cust1("Alice", "123 Main St", &acc1);
+
+
+    acc1.deposit(500);
+
+    acc1.withdraw(200);
+
+
+    displayCustomerInfo(cust1);
+
+
+
+    Bank bank;
+
+    bank.addCustomer(&cust1);
+
+
+
+    cout << "\n--- Search by Name ---\n";
+
+    bank.searchCustomer("Alice");
+
+
+
+    cout << "\n--- Search by Account Number ---\n";
+
+    bank.searchCustomer(101);
+
+
+
+    cout << "\n--- Loan Info ---\n";
+
+    Loan loan1(3000.0);
+    loan1.showLoan();
+
+
+
+    cout << "\n--- Loan Structure Example ---\n";
+
+    LoanDetails loanDetails = {5000, "Home Loan"};
+
+    cout << "Loan Amount: $" << loanDetails.loanAmount << ", Type: " << loanDetails.loanType << endl;
+
+
+
+    cout << "\n--- Total Accounts ---\n";
+
+    Account::displayTotalAccounts();
+
+    return 0;
+
+}
+
+
+
+git remote add origin https://github.com/Fares320/Banking-System-Uni-project-.git
+git branch -M main
+git push -u origin main
